@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование задачи</title>
+</head>
+<body>
+    <h2>Редактирование задачи</h2>
+    <form method="POST" action="/edit_task/{{ task.id }}">
+        <label for="content">Текст задачи:</label>
+        <input type="text" id="content" name="content" value="{{ task.content }}" required>
+        <button type="submit">Сохранить изменения</button>
+    </form>
+    <a href="/tasks">Отмена</a>
+</body>
+</html>

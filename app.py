@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -27,31 +27,40 @@ class Task(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
+with app.app_context():
+    db.create_all()
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@app.route('/')
+def index():
+    return render_template('login.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+    username = request.form['username']
+    password = request.form['password']
 
-        if not User().is_valid_username(username):
-            flash('Имя пользователя должно содержать хотя-бы одну букву любого алфавита или цифру')
-            return redirect(url_for('register'))
+    if not User().is_valid_username(username):
+        flash('Имя пользователя должно содержать хотя-бы одну букву любого алфавита или цифру')
+        return redirect(url_for('register'))
 
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            flash('Пользователь с таким именем уже существует. Пожалуйста выберите другое имя пользователя')
-            return redirect(url_for('register'))
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        flash('Пользователь с таким именем уже существует. Пожалуйста выберите другое имя пользователя')
+        return redirect(url_for('register'))
 
-        new_user = User(username=username, password=password)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Регистрация успешна. Теперь вы можете войти.', 'success')
-        return redirect(url_for('login'))
+    new_user = User(username=username, password=password)
+    db.session.add(new_user)
+    db.session.commit()
+    flash('Регистрация успешна. Теперь вы можете войти.', 'success')
+    return redirect(url_for('login'))
+
+
     return render_template('register.html')
 
 
@@ -126,7 +135,6 @@ def complete_task(task_id):
 
 
 if __name__ == '__main__':
-    db.create_all()
 
     with app.app_context():
         if db.session.query(User).count() == 0:
@@ -138,8 +146,5 @@ if __name__ == '__main__':
         logout_user()
 
 
-    @app.route('/')
-    def index():
-        return redirect(url_for('login'))
 
     app.run(debug=True)

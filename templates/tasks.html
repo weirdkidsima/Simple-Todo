@@ -8,23 +8,20 @@
 <body>
     <h2>Список задач</h2>
     <form method="POST" action="/add_task">
-        <label for="content">Новая задача:</label>
         <input type="text" id="content" name="content" required>
         <button type="submit">Добавить задачу</button>
     </form>
 
-    <ul>
+    <ol>
         {% for task in tasks %}
             <li>
-                {{ task.content }}
-                <a href="/delete_task/{{ task.id }}">Удалить</a>
-                {% if not task.completed %}
-                    <a href="/complete_task/{{ task.id }}">Выполнено</a>
-                {% endif %}
+            <span {% if task.completed %}style="text-decoration: line-through;" {% endif %}>{{ task.content }}</span>
+            <a href="/complete_task/{{ task.id }}"><button>Пометить</button></a>
+                <a href="/delete_task/{{ task.id }}"><button>удалить</button></a>
             </li>
         {% endfor %}
-    </ul>
+    </ol>
 
-    <a href="/logout">Выйти</a>
+    <a href="/logout"><button>Выйти</button></a>
 </body>
 </html>

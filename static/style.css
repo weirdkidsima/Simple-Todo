@@ -1,0 +1,36 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    font-family: Montserrat, sans-serif;
+}
+
+input {
+    margin: 10px 0;
+    padding: 10px;
+    border: unset;
+    border-bottom: 2px solid #e3e3e3;
+    outline: none;
+}
+
+button {
+    padding: 5px;
+    background: #e3e3e3;
+    border: unset;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+h2, label, p {
+    user-select: none;
+}
+
+input:focus::-webkit-input-placeholder {
+    color: transparent;
+    }

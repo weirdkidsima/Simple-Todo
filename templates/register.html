@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
     <title>Регистрация</title>
 </head>
 <body>
     <h2>Регистрация</h2>
-    <form method="POST" action="/register">
+    <form method="POST" action="/register" >
         <label for="username">Имя пользователя:</label>
-        <input type="text" id="username" name="username" required>
+        <input type="text" id="username" name="username" placeholder="Пример: Anton1" required>
         {% if 'register' in request.path %}
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -23,7 +24,7 @@
         {% endif %}
         <br>
         <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="password" placeholder="Придумай посложнее" required>
         <br>
         <button type="submit">Зарегистрироваться</button>
         <p>Уже есть аккаунт? <a href="{{ url_for('login') }}">Войти</a></p>

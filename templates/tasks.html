@@ -18,7 +18,8 @@
             <li>
             <span {% if task.completed %}style="text-decoration: line-through;" {% endif %}>{{ task.content }}</span>
             <a href="/complete_task/{{ task.id }}"><button>Пометить</button></a>
-                <a href="/delete_task/{{ task.id }}"><button>удалить</button></a>
+            <a href="/delete_task/{{ task.id }}"><button>удалить</button></a>
+            <a href="/edit_task/{{ task.id }}"><button>Изменить</button></a>
             </li>
         {% endfor %}
     </ol>

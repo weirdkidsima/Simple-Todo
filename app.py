@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, session, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_migrate import Migrate
@@ -29,8 +29,19 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def is_valid_username(self, username):
-        return any(c.isalnum() for c in username)
+
+def is_valid_username(username):
+    has_letter = False
+    has_number = False
+
+    for c in username:
+        if c.isalpha():
+            has_letter = True
+        elif c.isdigit():
+            has_number = True
+    if has_letter and has_number:
+        return True
+    return False
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,12 +62,14 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        print(username)
 
-        if not User().is_valid_username(username):
+        if not is_valid_username(username):
             flash('Имя пользователя должно содержать хотя-бы одну букву любого алфавита или цифру')
             return redirect(url_for('register'))
 
         existing_user = User.query.filter_by(username=username).first()
+        print(existing_user)
         if existing_user:
             flash('Пользователь с таким именем уже существует')
             return redirect(url_for('register'))
@@ -65,8 +78,10 @@ def register():
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
-        flash('Регистрация успешна. Теперь вы можете войти.', 'success')
-        return redirect('/login')
+
+        login_user(new_user) # логиним юзера из реги
+        print(redirect(url_for('tasks')))
+        return redirect(url_for('tasks'))
 
     return render_template('register.html')
 
@@ -81,6 +96,7 @@ def login():
             if user and user.check_password(password):
                 login_user(user)
                 flash('Вход успешен.', 'success')
+                print(redirect(url_for('tasks')))
                 return redirect(url_for('tasks'))
             else:
                 flash('Неправильное имя пользователя или пароль.', 'danger')
@@ -133,6 +149,14 @@ def delete_task(task_id):
 def complete_task(task_id):
     task = Task.query.get(task_id)
     task.completed = True
+    db.session.commit()
+    return redirect(url_for('tasks'))
+
+@app.route('/return_task/<int:task_id>')
+@login_required
+def return_task(task_id):
+    task = Task.query.get(task_id)
+    task.completed = False
     db.session.commit()
     return redirect(url_for('tasks'))
 

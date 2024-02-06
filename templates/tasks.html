@@ -17,7 +17,8 @@
         {% for task in tasks %}
             <li>
             <span {% if task.completed %}style="text-decoration: line-through;" {% endif %}>{{ task.content }}</span>
-            <a href="/complete_task/{{ task.id }}"><button>Пометить</button></a>
+            <a id="complete-task-btn-{{ task.id }}" href="/complete_task/{{ task.id }}"><button onclick="completeTask({{ task.id }})">Пометить</button></a>
+
                 <a href="/delete_task/{{ task.id }}"><button>удалить</button></a>
             </li>
         {% endfor %}
@@ -26,3 +27,22 @@
     <a href="/logout"><button>Выйти</button></a>
 </body>
 </html>
+
+<script>
+
+    function completeTask(taskId) {
+        var button = document.getElementById('complete-task-btn-' + taskId);
+        var count = parseInt(localStorage.getItem('complete_task_count_' + taskId)) || 0;
+        count++;
+        var newHref = count % 2 == 0 ? '/complete_task/' + taskId : '/return_task/' + taskId; // Большой костыль
+        if (count % 2 == 0){ // Чтобы юзер не забил себя
+            count = 2;
+        }
+        button.setAttribute('href', newHref);
+
+        // Сохраняем количество нажатий в локальном хранилище
+        localStorage.setItem('complete_task_count_' + taskId, count);
+
+        console.log(localStorage)
+    }
+</script>

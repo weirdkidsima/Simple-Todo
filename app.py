@@ -62,14 +62,12 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        print(username)
 
         if not is_valid_username(username):
             flash('Имя пользователя должно содержать хотя-бы одну букву любого алфавита или цифру')
             return redirect(url_for('register'))
 
         existing_user = User.query.filter_by(username=username).first()
-        print(existing_user)
         if existing_user:
             flash('Пользователь с таким именем уже существует')
             return redirect(url_for('register'))
@@ -80,7 +78,6 @@ def register():
         db.session.commit()
 
         login_user(new_user) # логиним юзера из реги
-        print(redirect(url_for('tasks')))
         return redirect(url_for('tasks'))
 
     return render_template('register.html')
@@ -96,7 +93,6 @@ def login():
             if user and user.check_password(password):
                 login_user(user)
                 flash('Вход успешен.', 'success')
-                print(redirect(url_for('tasks')))
                 return redirect(url_for('tasks'))
             else:
                 flash('Неправильное имя пользователя или пароль.', 'danger')

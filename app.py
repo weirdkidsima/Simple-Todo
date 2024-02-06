@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 from flask import Flask, render_template, session, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -43,6 +44,7 @@ def is_valid_username(username):
         return True
     return False
 #TEST!!!!
+
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
@@ -59,31 +61,39 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    message = None
+    message_color = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
         if not is_valid_username(username):
-            flash('Имя пользователя должно содержать хотя-бы одну букву любого алфавита или цифру')
-            return redirect(url_for('register'))
+            message = 'В логине должна быть как минимум 1 буква и 1 цифра'
+            message_color = 'error'
+        else:
+            existing_user = User.query.filter_by(username=username).first()
+            if existing_user:
+                message = 'Пользователь уже существует'
+                message_color = 'error'
+            else:
+                new_user = User(username=username)
+                new_user.set_password(password)
+                db.session.add(new_user)
+                db.session.commit()
 
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            flash('Пользователь с таким именем уже существует')
-            return redirect(url_for('register'))
+                login_user(new_user) # логиним юзера из реги
+                return redirect(url_for('tasks'))
 
-        new_user = User(username=username)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit()
+    return render_template('register.html', message=message, message_color=message_color)
 
-        login_user(new_user) # логиним юзера из реги
-        return redirect(url_for('tasks'))
 
-    return render_template('register.html')
+async def create_Window():
+    return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    message = None
+    message_color = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -92,12 +102,15 @@ def login():
         if 'login' in request.path:
             if user and user.check_password(password):
                 login_user(user)
-                flash('Вход успешен.', 'success')
                 return redirect(url_for('tasks'))
+            elif username == "":
+                message = 'Заполните поля'
+                message_color = "error"
             else:
-                flash('Неправильное имя пользователя или пароль.', 'danger')
+                message = 'Неправильное имя пользователя или пароль'
+                message_color = "error"
 
-    return render_template('login.html')
+    return render_template('login.html', message=message, message_color=message_color)
 
 @app.route('/logout')
 @login_required

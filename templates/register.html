@@ -7,6 +7,11 @@
     <title>Регистрация</title>
 </head>
 <body>
+    {% if message %}
+    <div id="square" class="{{ message_class }} {% if message %}hidden{% endif %} {{ message_color }}">
+        <p id="message">{{ message }}</p> <!-- Добавляем id "message" -->
+    </div>
+    {% endif %}
     <h2>Регистрация</h2>
     <form method="POST" action="/register" >
         <label for="username">Имя пользователя:</label>
@@ -31,3 +36,18 @@
     </form>
 </body>
 </html>
+
+<script>
+    window.onload = function() {
+        var message = "{{ message }}";
+        if (message) {
+            var square = document.getElementById("square");
+            square.classList.remove("hidden");
+
+            // Скрываем квадратик через 5 секунд
+            setTimeout(function() {
+                square.classList.add("hidden");
+            }, 3000);
+        }
+    }
+</script>

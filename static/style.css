@@ -5,7 +5,7 @@
 }
 
 body {
-    background-color: #333;
+    background-color: #606060;
     display: flex;
     flex-direction: column;
     width: 400px;
@@ -51,4 +51,50 @@ li button {
 
 input:focus::-webkit-input-placeholder {
     color: transparent;
+}
+
+#square {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: auto;
+    height: 36px;
+    border: 2px solid transparent;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    display: block !important;
+}
+
+#square p {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.hidden {
+    visibility: hidden;
+    animation: fadeInOut 0.5s ease-in-out forwards;
+}
+
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+}
+
+.success {
+    background-color: green;
+}
+
+.error {
+    background-color: red !important;
+    border-color: darkred !important;
 }

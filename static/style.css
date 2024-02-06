@@ -5,6 +5,7 @@
 }
 
 body {
+    background-color: #333;
     display: flex;
     flex-direction: column;
     width: 400px;
@@ -12,6 +13,8 @@ body {
 }
 
 input {
+    background-color: #333333;
+    color: #fff;
     margin: 10px 0;
     padding: 10px;
     border: unset;
@@ -19,18 +22,33 @@ input {
     outline: none;
 }
 
+input::-moz-placeholder { 
+    color:#fff;
+}
+
 button {
     padding: 5px;
+    margin: 0 5px;
     background: #e3e3e3;
     border: unset;
     cursor: pointer;
     border-radius: 20px;
 }
 
-h2, label, p {
+h2, label, p, ol {
+    color: #fff;
     user-select: none;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+}
+
+li button {
+    margin-right: 5px;
 }
 
 input:focus::-webkit-input-placeholder {
     color: transparent;
-    }
+}
